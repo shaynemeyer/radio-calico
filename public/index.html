@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RadioCalico - Live Stream</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500;600;700&family=Open+Sans:wght@400&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/styles.css">
+    <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div class="header-content">
+                <img src="RadioCalicoLogoTM.png" alt="RadioCalico Logo" class="logo">
+                <h1>RadioCalico Live Stream</h1>
+            </div>
+        </div>
+        
+        <div class="main-content">
+            <div class="album-art-container">
+                <div id="albumArtContainer">
+                    <div class="album-art-placeholder-large">Loading...</div>
+                </div>
+            </div>
+            
+            <div class="track-info-main">
+                <div id="currentTrack" class="loading-metadata">Loading track information...</div>
+                
+                <div class="source-quality">
+                    <p>Source quality: 16-bit 44.1kHz</p>
+                    <p>Stream quality: 48kHz FLAC / HLS Lossless</p>
+                </div>
+                
+                <div id="ratingSection" class="rating-section" style="display: none;">
+                    <p>Rate this track:</p>
+                    <div class="rating-buttons">
+                        <button id="thumbsUpBtn" class="rating-btn">
+                            👍 <span id="thumbsUpCount">0</span>
+                        </button>
+                        <button id="thumbsDownBtn" class="rating-btn">
+                            👎 <span id="thumbsDownCount">0</span>
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="audio-controls">
+                    <audio id="audioPlayer" preload="none">
+                        Your browser does not support the audio element.
+                    </audio>
+                    
+                    <div class="controls">
+                        <button id="playBtn">▶</button>
+                        <span id="status" class="status-text">0:35 / Live</span>
+                        <button id="volumeBtn">🔊</button>
+                        <input type="range" id="volumeSlider" min="0" max="100" value="50">
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="previous-tracks-section">
+            <div class="previous-tracks-content">
+                <h3>Previous tracks:</h3>
+                <div id="recentTracks" class="loading-metadata">Loading recent tracks...</div>
+            </div>
+        </div>
+    </div>
+
+    <script src="scripts/site.js"></script>
+</body>
+</html>

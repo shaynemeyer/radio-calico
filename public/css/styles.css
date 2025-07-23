@@ -1,0 +1,419 @@
+:root {
+    --mint: #D8F2D5;
+    --forest-green: #1F4E23;
+    --teal: #38A29D;
+    --calico-orange: #EFA63C;
+    --charcoal: #231F20;
+    --cream: #F5EADA;
+    --white: #FFFFFF;
+}
+
+* {
+    box-sizing: border-box;
+}
+
+body {
+    font-family: "Open Sans", "Montserrat", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    font-size: 16px;
+    line-height: 1.6;
+    margin: 0;
+    padding: 0;
+    background-color: var(--white);
+    color: var(--charcoal);
+}
+
+.container {
+    background: var(--white);
+    padding: 0;
+    margin: 0;
+    min-height: 100vh;
+}
+
+.header {
+    background: var(--charcoal);
+    padding: 20px 0;
+    width: 100%;
+}
+
+.header-content {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 24px;
+}
+
+.logo {
+    width: 50px;
+    height: 50px;
+    min-width: 50px;
+}
+
+h1 {
+    font-family: "Montserrat", sans-serif;
+    font-weight: 600;
+    font-size: 2.5rem;
+    line-height: 1.2;
+    color: var(--cream);
+    margin: 0;
+    text-align: center;
+}
+
+h2 {
+    font-family: "Montserrat", sans-serif;
+    font-weight: 600;
+    font-size: 2.25rem;
+    line-height: 1.3;
+    color: var(--forest-green);
+    margin: 32px 0 16px 0;
+}
+
+h3 {
+    font-family: "Montserrat", sans-serif;
+    font-weight: 500;
+    font-size: 1.5rem;
+    line-height: 1.4;
+    color: var(--forest-green);
+    margin: 24px 0 16px 0;
+}
+
+.main-content {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 60px 24px;
+    gap: 60px;
+    align-items: center;
+}
+
+#audioPlayer {
+    width: 100%;
+    max-width: 500px;
+    margin: 20px 0;
+}
+
+.controls {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    margin: 20px 0;
+    padding: 16px;
+    background: var(--charcoal);
+    border-radius: 8px;
+    color: var(--white);
+}
+
+.status-text {
+    color: var(--white);
+    font-size: 0.9rem;
+    flex: 1;
+    text-align: center;
+}
+
+#volumeSlider {
+    width: 100px;
+    accent-color: var(--teal);
+}
+
+.audio-controls {
+    margin-top: 24px;
+}
+
+.controls button {
+    background: transparent;
+    color: var(--white);
+    border: none;
+    cursor: pointer;
+    font-size: 1.5rem;
+    padding: 8px;
+    border-radius: 4px;
+    transition: background-color 0.3s ease;
+}
+
+.controls button:hover:not(:disabled) {
+    background: rgba(255,255,255,0.1);
+}
+
+.controls button:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.secondary-btn {
+    background: transparent;
+    color: var(--forest-green);
+    border: 2px solid var(--forest-green);
+}
+
+.secondary-btn:hover:not(:disabled) {
+    background: var(--mint);
+}
+
+.stream-info {
+    margin-top: 32px;
+    padding: 24px;
+    background: var(--cream);
+    border-radius: 8px;
+    text-align: left;
+}
+
+.stream-info h3 {
+    margin-top: 0;
+}
+
+.stream-info p {
+    margin: 8px 0;
+}
+
+.metadata-section {
+    margin-top: 32px;
+}
+
+.album-art-container {
+    position: relative;
+}
+
+.album-art-large {
+    width: 100%;
+    height: auto;
+    aspect-ratio: 1;
+    object-fit: cover;
+    border-radius: 8px;
+}
+
+.album-art-placeholder-large {
+    width: 100%;
+    aspect-ratio: 1;
+    background: var(--mint);
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--forest-green);
+    font-size: 18px;
+    font-weight: 500;
+}
+
+.track-info-main {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.artist-name {
+    font-family: "Montserrat", sans-serif;
+    font-weight: 700;
+    font-size: 4rem;
+    line-height: 1.1;
+    color: var(--charcoal);
+    margin: 0;
+}
+
+.song-title {
+    font-family: "Montserrat", sans-serif;
+    font-weight: 600;
+    font-size: 2.5rem;
+    line-height: 1.2;
+    color: var(--charcoal);
+    margin: 0;
+}
+
+.album-info {
+    font-size: 1.25rem;
+    color: var(--charcoal);
+    margin: 0;
+    font-weight: 400;
+}
+
+.source-quality {
+    margin: 16px 0;
+}
+
+.source-quality p {
+    margin: 4px 0;
+    font-size: 0.9rem;
+    color: var(--charcoal);
+    opacity: 0.7;
+    font-style: italic;
+}
+
+.rating-section-main {
+    margin: 20px 0;
+}
+
+.previous-tracks-section {
+    background: var(--mint);
+    width: 100%;
+    padding: 40px 0;
+}
+
+.previous-tracks-content {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 24px;
+}
+
+.previous-tracks-content h3 {
+    font-family: "Montserrat", sans-serif;
+    font-weight: 600;
+    font-size: 1.5rem;
+    color: var(--charcoal);
+    margin: 0 0 20px 0;
+}
+
+.track-item {
+    margin: 8px 0;
+    color: var(--charcoal);
+}
+
+.track-item:last-child {
+    border-bottom: none;
+}
+
+.track-info {
+    flex: 1;
+}
+
+.track-number {
+    color: var(--teal);
+    font-size: 0.75rem;
+    font-weight: 600;
+    margin-right: 16px;
+    min-width: 24px;
+}
+
+.track-name {
+    font-weight: 500;
+    color: var(--charcoal);
+}
+
+.track-artist-small {
+    color: var(--charcoal);
+    opacity: 0.7;
+    font-size: 0.875rem;
+}
+
+.loading-metadata {
+    text-align: center;
+    color: var(--charcoal);
+    opacity: 0.7;
+    font-style: italic;
+}
+
+.rating-section {
+    margin: 16px 0;
+    text-align: left;
+}
+
+.rating-buttons {
+    display: flex;
+    justify-content: flex-start;
+    gap: 16px;
+    margin-bottom: 12px;
+    flex-wrap: wrap;
+}
+
+.rating-btn {
+    background: transparent;
+    border: none;
+    color: var(--charcoal);
+    padding: 8px 12px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 1.5rem;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-family: "Open Sans", sans-serif;
+    font-weight: 400;
+    text-transform: none;
+    letter-spacing: normal;
+    margin: 0;
+}
+
+.rating-btn:hover:not(:disabled) {
+    background: var(--mint);
+}
+
+.rating-btn.active {
+    background: var(--calico-orange);
+    color: var(--white);
+}
+
+.rating-btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.rating-stats {
+    color: var(--charcoal);
+    font-size: 0.875rem;
+    display: flex;
+    justify-content: flex-start;
+    gap: 20px;
+    opacity: 0.7;
+}
+
+.rating-stat {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+@media (max-width: 768px) {
+    .now-playing-content {
+        flex-direction: column;
+        text-align: center;
+    }
+    
+    .album-art,
+    .album-art-placeholder {
+        width: 200px;
+        height: 200px;
+    }
+    
+    .controls {
+        flex-direction: column;
+        align-items: center;
+    }
+    
+    .header-content {
+        flex-direction: column;
+        gap: 8px;
+    }
+    
+    h1 {
+        font-size: 2rem;
+    }
+    
+    .container {
+        margin: 0 16px;
+        padding: 16px;
+    }
+    
+    .header {
+        margin: 0 -16px 24px -16px;
+    }
+    
+    .main-content {
+        grid-template-columns: 1fr;
+        gap: 40px;
+        padding: 40px 16px;
+    }
+    
+    .artist-name {
+        font-size: 2.5rem;
+    }
+    
+    .song-title {
+        font-size: 1.8rem;
+    }
+    
+    .previous-tracks-content {
+        padding: 0 16px;
+    }
+}
