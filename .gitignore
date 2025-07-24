@@ -1,6 +1,7 @@
-.DS_Store
-
-.env
-.env.local
-
 node_modules/
+coverage/
+test-results/
+playwright-report/
+server.log
+*.log
+.env
