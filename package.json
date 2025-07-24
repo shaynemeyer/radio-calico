@@ -6,7 +6,13 @@
   "scripts": {
     "start": "node server.js",
     "dev": "node server.js",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "jest",
+    "test:watch": "jest --watch",
+    "test:backend": "jest --selectProjects backend",
+    "test:frontend": "jest --selectProjects frontend",
+    "test:integration": "playwright test",
+    "test:coverage": "jest --coverage",
+    "test:all": "npm run test && npm run test:integration"
   },
   "keywords": [],
   "author": "",
@@ -16,5 +22,14 @@
     "cors": "^2.8.5",
     "express": "^5.1.0",
     "sqlite3": "^5.1.7"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.54.1",
+    "@testing-library/jest-dom": "^6.6.3",
+    "jest": "^30.0.5",
+    "jest-environment-jsdom": "^30.0.5",
+    "msw": "^2.10.4",
+    "supertest": "^7.1.4",
+    "whatwg-fetch": "^3.6.20"
   }
 }
