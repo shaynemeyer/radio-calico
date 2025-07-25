@@ -1,0 +1,18 @@
+# Docker Compose override for local development
+# This file is automatically used by docker-compose for local overrides
+
+version: '3.8'
+
+services:
+  radiocalico-dev:
+    environment:
+      # Override environment variables for development
+      - NODE_ENV=development
+      - DEBUG=radiocalico:*
+    volumes:
+      # Mount source code for hot reload
+      - .:/app
+      - /app/node_modules
+      # Use named volume for development database
+      - radiocalico-dev-data:/app/data
+    # Add any additional development-specific configuration here
