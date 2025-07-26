@@ -5,12 +5,13 @@ const path = require('path');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
+const DATABASE_PATH = process.env.DATABASE_PATH || './database.db';
 
 app.use(cors());
 app.use(express.json());
 app.use(express.static('public'));
 
-const db = new sqlite3.Database('./database.db', (err) => {
+const db = new sqlite3.Database(DATABASE_PATH, (err) => {
   if (err) {
     console.error('Error opening database:', err.message);
   } else {
@@ -121,12 +122,18 @@ app.listen(PORT, () => {
   console.log(`Server running on http://localhost:${PORT}`);
 });
 
-process.on('SIGINT', () => {
+// Graceful shutdown handling for Docker
+const gracefulShutdown = () => {
+  console.log('Received shutdown signal, closing server gracefully...');
   db.close((err) => {
     if (err) {
-      console.error(err.message);
+      console.error('Error closing database:', err.message);
+    } else {
+      console.log('Database connection closed');
     }
-    console.log('Database connection closed');
     process.exit(0);
   });
-});
+};
+
+process.on('SIGINT', gracefulShutdown);
+process.on('SIGTERM', gracefulShutdown);
