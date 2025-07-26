@@ -7,7 +7,7 @@ services:
     environment:
       POSTGRES_DB: radiocalico
       POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: ${DB_PASSWORD:-radiocalico2024}
+      POSTGRES_PASSWORD: ${DB_PASSWORD:?Database password must be set in environment}
     volumes:
       - postgres_data:/var/lib/postgresql/data
     networks:
@@ -31,7 +31,7 @@ services:
       DB_PORT: 5432
       DB_NAME: radiocalico
       DB_USER: postgres
-      DB_PASSWORD: ${DB_PASSWORD:-radiocalico2024}
+      DB_PASSWORD: ${DB_PASSWORD:?Database password must be set in environment}
     depends_on:
       postgres:
         condition: service_healthy
@@ -39,7 +39,7 @@ services:
       - radiocalico-network
     restart: unless-stopped
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:3000/api/users"]
+      test: ["CMD", "curl", "-f", "http://localhost:3000/health"]
       interval: 30s
       timeout: 10s
       retries: 3
@@ -60,7 +60,7 @@ services:
       - radiocalico-network
     restart: unless-stopped
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost/health"]
+      test: ["CMD", "curl", "-f", "http://localhost/nginx-health"]
       interval: 30s
       timeout: 10s
       retries: 3
