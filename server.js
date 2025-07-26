@@ -12,13 +12,54 @@ app.use(express.json());
 app.use(express.static('public'));
 
 // Initialize database connection
+<<<<<<< HEAD
 db.connect().catch(err => {
   console.error('Failed to connect to database:', err);
   process.exit(1);
 });
+=======
+let dbConnected = false;
+db.connect()
+  .then(() => {
+    dbConnected = true;
+    console.log('Database connected successfully');
+  })
+  .catch(err => {
+    console.error('Failed to connect to database:', err);
+    console.log('Application will start but database operations will fail until connection is established');
+  });
+>>>>>>> c7aadec0e9bfe0875c960e53cc36c0adc9c2097b
 
 app.get('/', (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'index.html'));
+});
+
+<<<<<<< HEAD
+app.get('/api/users', async (req, res) => {
+  try {
+    const result = await db.query('SELECT * FROM users');
+    res.json(result.rows);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+=======
+app.get('/health', async (req, res) => {
+  const health = {
+    status: 'healthy',
+    timestamp: new Date().toISOString(),
+    database: 'disconnected'
+  };
+
+  try {
+    await db.query('SELECT 1');
+    health.database = 'connected';
+    res.json(health);
+  } catch (err) {
+    health.status = 'unhealthy';
+    res.status(503).json(health);
+  }
 });
 
 app.get('/api/users', async (req, res) => {
@@ -30,6 +71,7 @@ app.get('/api/users', async (req, res) => {
   }
 });
 
+>>>>>>> c7aadec0e9bfe0875c960e53cc36c0adc9c2097b
 app.post('/api/users', async (req, res) => {
   const { name, email } = req.body;
   try {

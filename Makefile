@@ -22,6 +22,12 @@ dev-stop: ## Stop development Docker containers
 
 # Production
 prod: ## Start production environment (PostgreSQL + nginx)
+	@if [ -z "$$DB_PASSWORD" ]; then \
+		echo "❌ ERROR: DB_PASSWORD environment variable is required"; \
+		echo "Set it with: export DB_PASSWORD=\"your_secure_password\""; \
+		echo "Or generate one: export DB_PASSWORD=\"$$(openssl rand -base64 32)\""; \
+		exit 1; \
+	fi
 	docker compose -f docker-compose.prod.yml up -d
 	@echo ""
 	@echo "🚀 Production environment started!"
@@ -139,5 +145,5 @@ quick-deploy: ## Quick production deployment
 health: ## Check health of production services
 	@echo "Checking production services health..."
 	@curl -s http://localhost/health > /dev/null && echo "✅ Nginx: healthy" || echo "❌ Nginx: unhealthy"
-	@curl -s http://localhost/api/users > /dev/null && echo "✅ API: healthy" || echo "❌ API: unhealthy"
+	@curl -s http://localhost/health | jq -r '.status + " - DB: " + .database' 2>/dev/null || echo "❌ API: unhealthy"
 	@docker compose -f docker-compose.prod.yml exec postgres pg_isready -U postgres > /dev/null 2>&1 && echo "✅ Database: healthy" || echo "❌ Database: unhealthy"
