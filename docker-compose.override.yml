@@ -1,5 +1,5 @@
 # Docker Compose override for local development
-# This file is automatically used by docker-compose for local overrides
+# This file is automatically used by docker compose for local overrides
 
 version: '3.8'
 

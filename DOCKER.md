@@ -7,7 +7,7 @@ This guide covers deploying RadioCalico using Docker containers for both develop
 ### Development
 ```bash
 # Start development environment with hot reload
-docker-compose --profile development up
+docker compose --profile development up
 
 # Or use the deployment script
 ./scripts/deploy.sh development
@@ -16,7 +16,7 @@ docker-compose --profile development up
 ### Production
 ```bash
 # Start production environment
-docker-compose --profile production up -d
+docker compose --profile production up -d
 
 # Or use the deployment script
 ./scripts/deploy.sh production
@@ -152,10 +152,10 @@ docker inspect --format='{{.State.Health}}' radiocalico-production
 ### Application Logs
 ```bash
 # View logs
-docker-compose logs -f
+docker compose logs -f
 
 # View specific service logs
-docker-compose logs -f radiocalico-prod
+docker compose logs -f radiocalico-prod
 ```
 
 ### Database Access
@@ -174,7 +174,7 @@ docker exec radiocalico-production sqlite3 /app/data/database.db ".dump" > backu
 **Container won't start**
 ```bash
 # Check logs
-docker-compose logs radiocalico-prod
+docker compose logs radiocalico-prod
 
 # Check disk space
 docker system df
@@ -236,7 +236,7 @@ services:
 docker network create radiocalico-network
 
 # Run with custom network
-docker-compose --profile production up -d
+docker compose --profile production up -d
 ```
 
 ### External Database

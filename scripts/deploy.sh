@@ -17,7 +17,7 @@ fi
 
 # Stop existing containers
 echo "🛑 Stopping existing containers..."
-docker-compose --profile $ENVIRONMENT down
+docker compose --profile $ENVIRONMENT down
 
 # Pull any base image updates
 echo "📥 Updating base images..."
@@ -25,7 +25,7 @@ docker pull node:18-alpine
 
 # Start services
 echo "▶️  Starting $ENVIRONMENT services..."
-docker-compose --profile $ENVIRONMENT up -d
+docker compose --profile $ENVIRONMENT up -d
 
 # Wait for services to be healthy
 echo "⏳ Waiting for services to be ready..."
@@ -51,8 +51,8 @@ done
 # Show running containers
 echo ""
 echo "📋 Running containers:"
-docker-compose ps
+docker compose ps
 
 echo ""
-echo "📝 To view logs: docker-compose logs -f"
-echo "🛑 To stop: docker-compose --profile $ENVIRONMENT down"
+echo "📝 To view logs: docker compose logs -f"
+echo "🛑 To stop: docker compose --profile $ENVIRONMENT down"

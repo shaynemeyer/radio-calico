@@ -20,14 +20,14 @@ A live streaming web application built with Node.js, featuring real-time metadat
 ```bash
 npm run docker:dev
 # or
-docker-compose --profile development up
+docker compose --profile development up
 ```
 
 **Production:**
 ```bash
 npm run docker:prod  
 # or
-docker-compose --profile production up -d
+docker compose --profile production up -d
 ```
 
 ### Local Development
@@ -156,7 +156,7 @@ DATABASE_PATH=/app/data/database.db
 
 3. **Monitor Health**
    ```bash
-   docker-compose logs -f
+   docker compose logs -f
    curl http://localhost:3000/
    ```
 

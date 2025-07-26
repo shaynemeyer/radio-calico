@@ -24,7 +24,7 @@ if [ "$1" = "--integration" ]; then
     echo "🌐 Running integration tests..."
     
     # Start the application in background
-    docker-compose --profile development up -d
+    docker compose --profile development up -d
     
     # Wait for application to be ready
     sleep 10
@@ -38,7 +38,7 @@ if [ "$1" = "--integration" ]; then
         npm run test:integration
     
     # Stop the application
-    docker-compose --profile development down
+    docker compose --profile development down
     
     echo "✅ Integration tests completed!"
 fi

@@ -16,8 +16,8 @@
     "docker:build": "./scripts/build.sh",
     "docker:deploy": "./scripts/deploy.sh",
     "docker:test": "./scripts/test.sh",
-    "docker:dev": "docker-compose --profile development up",
-    "docker:prod": "docker-compose --profile production up -d"
+    "docker:dev": "docker compose --profile development up",
+    "docker:prod": "docker compose --profile production up -d"
   },
   "keywords": [],
   "author": "",
