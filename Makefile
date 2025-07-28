@@ -1,4 +1,4 @@
-.PHONY: help install dev dev-stop prod prod-stop test test-all test-watch test-backend test-frontend test-integration test-coverage clean clean-all logs logs-prod db-reset db-backup db-restore status build rebuild
+.PHONY: help install dev dev-stop prod prod-stop test test-all test-watch test-backend test-frontend test-integration test-coverage security-audit security-fix security-test clean clean-all logs logs-prod db-reset db-backup db-restore status build rebuild
 
 # Default target
 help: ## Show this help message
@@ -71,6 +71,16 @@ test-integration: ## Run integration tests with Playwright
 
 test-coverage: ## Run tests with coverage report
 	npm run test:coverage
+
+# Security
+security-audit: ## Run npm security audit
+	npm run security:audit
+
+security-fix: ## Fix security vulnerabilities automatically
+	npm run security:audit-fix
+
+security-test: ## Run security tests (fails on moderate+ vulnerabilities)
+	npm run security:test
 
 # Database Management
 db-reset: ## Reset production database (WARNING: destroys all data)

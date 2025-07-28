@@ -6,6 +6,9 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 - `npm start` or `npm run dev` - Start the Express server on http://localhost:3000
 - `npm install` - Install dependencies after cloning
+- `make security-audit` - Run npm security audit to check for vulnerabilities
+- `make security-test` - Run security tests (fails on moderate+ vulnerabilities)
+- `make security-fix` - Automatically fix security vulnerabilities
 
 ## Architecture Overview
 
