@@ -11,21 +11,6 @@ jobs:
     name: Run Tests
     runs-on: ubuntu-latest
     
-    services:
-      postgres:
-        image: postgres:15
-        env:
-          POSTGRES_PASSWORD: testpassword
-          POSTGRES_USER: testuser
-          POSTGRES_DB: radiocalico_test
-        options: >-
-          --health-cmd pg_isready
-          --health-interval 10s
-          --health-timeout 5s
-          --health-retries 5
-        ports:
-          - 5432:5432
-    
     strategy:
       matrix:
         node-version: [18, 20]
@@ -45,30 +30,13 @@ jobs:
       
       - name: Run tests via Make
         run: make test
-        env:
-          DB_HOST: localhost
-          DB_PORT: 5432
-          DB_NAME: radiocalico_test
-          DB_USER: testuser
-          DB_PASSWORD: testpassword
       
       - name: Run all tests via Make
         run: make test-all
-        env:
-          DB_HOST: localhost
-          DB_PORT: 5432
-          DB_NAME: radiocalico_test
-          DB_USER: testuser
-          DB_PASSWORD: testpassword
       
       - name: Generate test coverage
         run: make test-coverage
-        env:
-          DB_HOST: localhost
-          DB_PORT: 5432
-          DB_NAME: radiocalico_test
-          DB_USER: testuser
-          DB_PASSWORD: testpassword
+
       
       - name: Upload coverage to Codecov
         uses: codecov/codecov-action@v4
@@ -81,21 +49,6 @@ jobs:
     name: Integration Tests
     runs-on: ubuntu-latest
     needs: test
-    
-    services:
-      postgres:
-        image: postgres:15
-        env:
-          POSTGRES_PASSWORD: testpassword
-          POSTGRES_USER: testuser
-          POSTGRES_DB: radiocalico_test
-        options: >-
-          --health-cmd pg_isready
-          --health-interval 10s
-          --health-timeout 5s
-          --health-retries 5
-        ports:
-          - 5432:5432
     
     steps:
       - name: Checkout code
@@ -120,21 +73,9 @@ jobs:
           curl -f http://localhost:3000 || exit 1
         env:
           NODE_ENV: test
-          DB_HOST: localhost
-          DB_PORT: 5432
-          DB_NAME: radiocalico_test
-          DB_USER: testuser
-          DB_PASSWORD: testpassword
-      
       - name: Run integration tests via Make
         run: make test-integration
-        env:
-          DB_HOST: localhost
-          DB_PORT: 5432
-          DB_NAME: radiocalico_test
-          DB_USER: testuser
-          DB_PASSWORD: testpassword
-      
+
       - name: Upload Playwright test results
         uses: actions/upload-artifact@v4
         if: failure()
