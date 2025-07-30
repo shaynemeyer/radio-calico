@@ -17,7 +17,7 @@ This is a RadioCalico live streaming web application built with Node.js, featuri
 **Backend (server.js):**
 
 - Express.js server serving both API endpoints and static files
-- SQLite database (database.db) for data persistence
+- PostgreSQL database for data persistence
 - CORS enabled for cross-origin requests
 - REST API endpoints under `/api/` prefix
 - Server runs on port 3000 (configurable via PORT env var)
@@ -51,8 +51,8 @@ public/
 
 - `users` table with fields: id, name, email, created_at
 - `song_ratings` table with fields: id, song_id, user_session, rating, created_at
-- SQLite database auto-creates tables on startup
-- Database file: `./database.db`
+- PostgreSQL database auto-creates tables on startup
+- Connection configured via environment variables (DB_HOST, DB_PORT, DB_NAME, DB_USER, DB_PASSWORD)
 
 **Key API Endpoints:**
 
