@@ -43,7 +43,7 @@ Visit http://localhost:3000
 
 ### Backend
 - **Express.js** server with CORS support
-- **SQLite** database for data persistence
+- **PostgreSQL** database for data persistence
 - **REST API** endpoints for ratings and user management
 - **Graceful shutdown** handling for containerized deployments
 
@@ -111,7 +111,7 @@ Copy `.env.example` to `.env` and configure:
 ```bash
 NODE_ENV=production
 PORT=3000
-DATABASE_PATH=/app/data/database.db
+DATABASE_URL=postgresql://username:password@localhost:5432/radio_calico
 ```
 
 ## External Dependencies
