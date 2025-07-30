@@ -210,8 +210,8 @@ describe('Rating System API', () => {
       expect(response.status).toBe(200);
       expect(response.body).toEqual({
         songId: 'nonexistent_song',
-        thumbs_up: null,
-        thumbs_down: null,
+        thumbs_up: 0,
+        thumbs_down: 0,
         total_ratings: 0
       });
     });

@@ -67,6 +67,13 @@ class PostgresDB {
     try {
       const result = await client.query(text, params);
       return result;
+    } catch (error) {
+      console.error('Database query failed:', {
+        query: text,
+        params: params,
+        error: error.message
+      });
+      throw error;
     } finally {
       client.release();
     }
