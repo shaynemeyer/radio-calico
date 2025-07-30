@@ -1,122 +1,56 @@
 const request = require('supertest');
-const express = require('express');
-const cors = require('cors');
 const { getTestDatabase, isPostgresMode } = require('../setup/test-db');
 
-const app = express();
-app.use(cors());
-app.use(express.json());
+// Import server after database is set up
+let app;
 
-app.post('/api/songs/rate', async (req, res) => {
-  const { songId, rating, userSession } = req.body;
-  const db = getTestDatabase();
+beforeAll(async () => {
+  // Import server app after test database setup
+  const server = require('../../server');
+  app = server.app;
   
-  if (!songId || !rating || !userSession) {
-    return res.status(400).json({ error: 'songId, rating, and userSession are required' });
-  }
+  // Replace the server's database instance with our test database
+  const testDb = getTestDatabase();
   
-  if (rating !== 1 && rating !== -1) {
-    return res.status(400).json({ error: 'Rating must be 1 (thumbs up) or -1 (thumbs down)' });
-  }
-  
-  try {
+  // Mock the database query method to use test database
+  server.db.query = async (query, params) => {
     if (isPostgresMode()) {
-      await db.query(
-        'INSERT INTO song_ratings (song_id, user_session, rating) VALUES ($1, $2, $3) ON CONFLICT (song_id, user_session) DO UPDATE SET rating = $3',
-        [songId, userSession, rating]
-      );
+      return await testDb.query(query, params);
     } else {
-      await new Promise((resolve, reject) => {
-        db.run('INSERT OR REPLACE INTO song_ratings (song_id, user_session, rating) VALUES (?, ?, ?)', 
-          [songId, userSession, rating], 
-          function(err) {
-            if (err) {
-              reject(err);
-              return;
-            }
-            resolve();
+      // Handle SQLite queries
+      return new Promise((resolve, reject) => {
+        if (query.includes('INSERT') || query.includes('UPDATE')) {
+          const sqliteQuery = query
+            .replace(/\$(\d+)/g, '?')
+            .replace('ON CONFLICT (song_id, user_session) DO UPDATE SET rating = $3', '');
+          const finalQuery = sqliteQuery.includes('INSERT') 
+            ? sqliteQuery.replace('INSERT INTO', 'INSERT OR REPLACE INTO')
+            : sqliteQuery;
+          
+          testDb.run(finalQuery, params, function(err) {
+            if (err) reject(err);
+            else resolve({ rowCount: this.changes });
+          });
+        } else if (query.includes('SELECT')) {
+          const sqliteQuery = query.replace(/\$(\d+)/g, '?');
+          if (query.includes('SUM(CASE')) {
+            testDb.all(sqliteQuery, params, (err, rows) => {
+              if (err) reject(err);
+              else resolve({ rows: rows || [{ thumbs_up: 0, thumbs_down: 0, total_ratings: 0 }] });
+            });
+          } else {
+            testDb.all(sqliteQuery, params, (err, rows) => {
+              if (err) reject(err);
+              else resolve({ rows: rows || [] });
+            });
           }
-        );
+        }
       });
     }
-    res.json({ success: true, songId, rating });
-  } catch (err) {
-    res.status(500).json({ error: err.message });
-  }
+  };
 });
 
-app.get('/api/songs/:songId/ratings', async (req, res) => {
-  const { songId } = req.params;
-  const db = getTestDatabase();
-  
-  try {
-    let result;
-    if (isPostgresMode()) {
-      const queryResult = await db.query(`
-        SELECT 
-          SUM(CASE WHEN rating = 1 THEN 1 ELSE 0 END) as thumbs_up,
-          SUM(CASE WHEN rating = -1 THEN 1 ELSE 0 END) as thumbs_down,
-          COUNT(*) as total_ratings
-        FROM song_ratings WHERE song_id = $1
-      `, [songId]);
-      result = queryResult.rows[0] || { thumbs_up: 0, thumbs_down: 0, total_ratings: 0 };
-    } else {
-      result = await new Promise((resolve, reject) => {
-        db.all(`SELECT 
-          SUM(CASE WHEN rating = 1 THEN 1 ELSE 0 END) as thumbs_up,
-          SUM(CASE WHEN rating = -1 THEN 1 ELSE 0 END) as thumbs_down,
-          COUNT(*) as total_ratings
-          FROM song_ratings WHERE song_id = ?`, 
-          [songId], 
-          (err, rows) => {
-            if (err) {
-              reject(err);
-              return;
-            }
-            resolve(rows[0] || { thumbs_up: 0, thumbs_down: 0, total_ratings: 0 });
-          }
-        );
-      });
-    }
-    res.json({ songId, ...result });
-  } catch (err) {
-    res.status(500).json({ error: err.message });
-  }
-});
-
-app.get('/api/songs/:songId/user-rating/:userSession', async (req, res) => {
-  const { songId, userSession } = req.params;
-  const db = getTestDatabase();
-  
-  try {
-    let rating = null;
-    if (isPostgresMode()) {
-      const result = await db.query(
-        'SELECT rating FROM song_ratings WHERE song_id = $1 AND user_session = $2',
-        [songId, userSession]
-      );
-      rating = result.rows.length > 0 ? result.rows[0].rating : null;
-    } else {
-      rating = await new Promise((resolve, reject) => {
-        db.get('SELECT rating FROM song_ratings WHERE song_id = ? AND user_session = ?', 
-          [songId, userSession], 
-          (err, row) => {
-            if (err) {
-              reject(err);
-              return;
-            }
-            resolve(row ? row.rating : null);
-          }
-        );
-      });
-    }
-    res.json({ songId, userSession, rating });
-  } catch (err) {
-    res.status(500).json({ error: err.message });
-  }
-});
-
-describe('Rating System API', () => {
+describe('Rating System API (using actual server endpoints)', () => {
   describe('POST /api/songs/rate', () => {
     it('should submit new thumbs up rating', async () => {
       const response = await request(app)

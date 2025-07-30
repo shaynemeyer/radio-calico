@@ -2,6 +2,11 @@ const { Pool } = require('pg');
 
 class PostgresDB {
   constructor() {
+    // Validate required environment variables
+    if (!process.env.DB_PASSWORD) {
+      throw new Error('DB_PASSWORD environment variable is required for database connection');
+    }
+
     this.pool = new Pool({
       host: process.env.DB_HOST || 'localhost',
       port: process.env.DB_PORT || 5432,

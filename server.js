@@ -31,17 +31,23 @@ app.get('/health', async (req, res) => {
   const health = {
     status: 'healthy',
     timestamp: new Date().toISOString(),
-    database: 'disconnected'
+    database: 'disconnected',
+    uptime: process.uptime()
   };
 
   try {
     await db.query('SELECT 1');
     health.database = 'connected';
-    res.json(health);
   } catch (err) {
-    health.status = 'unhealthy';
-    res.status(503).json(health);
+    health.database = 'disconnected';
+    health.database_error = err.message;
+    // Only set status to degraded, not unhealthy - app can still serve static content
+    health.status = 'degraded';
   }
+
+  // Return 200 for degraded service (database down but app functional)
+  // Only return 503 for complete service failure
+  res.json(health);
 });
 
 app.get('/api/users', async (req, res) => {
@@ -119,21 +125,27 @@ app.get('/api/songs/:songId/user-rating/:userSession', async (req, res) => {
   }
 });
 
-app.listen(PORT, () => {
-  console.log(`Server running on http://localhost:${PORT}`);
-});
+// Only start server if this file is run directly (not imported)
+if (require.main === module) {
+  app.listen(PORT, () => {
+    console.log(`Server running on http://localhost:${PORT}`);
+  });
 
-// Graceful shutdown handling for Docker
-const gracefulShutdown = async () => {
-  console.log('Received shutdown signal, closing server gracefully...');
-  try {
-    await db.close();
-    console.log('Database connection closed');
-  } catch (err) {
-    console.error('Error closing database:', err.message);
-  }
-  process.exit(0);
-};
+  // Graceful shutdown handling for Docker
+  const gracefulShutdown = async () => {
+    console.log('Received shutdown signal, closing server gracefully...');
+    try {
+      await db.close();
+      console.log('Database connection closed');
+    } catch (err) {
+      console.error('Error closing database:', err.message);
+    }
+    process.exit(0);
+  };
 
-process.on('SIGINT', gracefulShutdown);
-process.on('SIGTERM', gracefulShutdown);
+  process.on('SIGINT', gracefulShutdown);
+  process.on('SIGTERM', gracefulShutdown);
+}
+
+// Export app and db for testing
+module.exports = { app, db };

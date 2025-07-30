@@ -9,6 +9,10 @@ function setupTestDatabase() {
   if (process.env.DB_HOST && process.env.DB_USER && process.env.DB_PASSWORD) {
     return setupPostgresTestDatabase();
   } else {
+    // For local SQLite testing, temporarily set DB_PASSWORD to avoid server startup issues
+    if (!process.env.DB_PASSWORD) {
+      process.env.DB_PASSWORD = 'test_password_for_sqlite_mode';
+    }
     return setupSqliteTestDatabase();
   }
 }
@@ -16,6 +20,11 @@ function setupTestDatabase() {
 function setupPostgresTestDatabase() {
   return new Promise(async (resolve, reject) => {
     try {
+      // Set a test password if not already set
+      if (!process.env.DB_PASSWORD) {
+        process.env.DB_PASSWORD = 'test_password';
+      }
+      
       testDb = new PostgresDB();
       await testDb.connect();
       isPostgres = true;

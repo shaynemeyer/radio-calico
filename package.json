@@ -37,6 +37,7 @@
     "jest": "^30.0.5",
     "jest-environment-jsdom": "^30.0.5",
     "msw": "^2.10.4",
+    "sqlite3": "^5.1.7",
     "supertest": "^7.1.4",
     "whatwg-fetch": "^3.6.20"
   }
