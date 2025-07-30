@@ -1,9 +1,9 @@
 const { setupTestDatabase, closeTestDatabase } = require('./test-db');
 
-beforeEach(async () => {
+beforeAll(async () => {
   await setupTestDatabase();
 });
 
-afterEach(async () => {
+afterAll(async () => {
   await closeTestDatabase();
 });

@@ -1,14 +1,43 @@
 const sqlite3 = require('sqlite3').verbose();
+const PostgresDB = require('../../src/db/postgres');
 
 let testDb = null;
+let isPostgres = false;
 
 function setupTestDatabase() {
+  // Use PostgreSQL if environment variables are set (CI environment)
+  if (process.env.DB_HOST && process.env.DB_USER && process.env.DB_PASSWORD) {
+    return setupPostgresTestDatabase();
+  } else {
+    return setupSqliteTestDatabase();
+  }
+}
+
+function setupPostgresTestDatabase() {
+  return new Promise(async (resolve, reject) => {
+    try {
+      testDb = new PostgresDB();
+      await testDb.connect();
+      isPostgres = true;
+      
+      // Clean up tables before tests
+      await testDb.query('TRUNCATE TABLE song_ratings, users RESTART IDENTITY CASCADE');
+      resolve();
+    } catch (err) {
+      reject(err);
+    }
+  });
+}
+
+function setupSqliteTestDatabase() {
   return new Promise((resolve, reject) => {
     testDb = new sqlite3.Database(':memory:', (err) => {
       if (err) {
         reject(err);
         return;
       }
+      
+      isPostgres = false;
       
       testDb.run(`CREATE TABLE IF NOT EXISTS users (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -41,12 +70,18 @@ function setupTestDatabase() {
 }
 
 function closeTestDatabase() {
-  return new Promise((resolve) => {
+  return new Promise(async (resolve) => {
     if (testDb) {
-      testDb.close(() => {
+      if (isPostgres) {
+        await testDb.close();
         testDb = null;
         resolve();
-      });
+      } else {
+        testDb.close(() => {
+          testDb = null;
+          resolve();
+        });
+      }
     } else {
       resolve();
     }
@@ -57,8 +92,13 @@ function getTestDatabase() {
   return testDb;
 }
 
+function isPostgresMode() {
+  return isPostgres;
+}
+
 module.exports = {
   setupTestDatabase,
   closeTestDatabase,
-  getTestDatabase
+  getTestDatabase,
+  isPostgresMode
 };
