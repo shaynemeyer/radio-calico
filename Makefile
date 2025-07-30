@@ -82,6 +82,10 @@ security-fix: ## Fix security vulnerabilities automatically
 security-test: ## Run security tests (fails on moderate+ vulnerabilities)
 	npm run security:test
 
+security-scan: ## Run comprehensive security scan (audit + test)
+	npm run security:audit
+	npm run security:test
+
 # Database Management
 db-reset: ## Reset production database (WARNING: destroys all data)
 	@echo "⚠️  WARNING: This will destroy all production data!"

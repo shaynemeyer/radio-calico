@@ -101,12 +101,8 @@ jobs:
       - name: Install dependencies
         run: npm ci
       
-      - name: Run security audit via Make
-        run: make security-audit
-        continue-on-error: true
-      
-      - name: Run security tests via Make (fail on moderate+ vulnerabilities)
-        run: make security-test
+      - name: Run comprehensive security scan via Make
+        run: make security-scan
       
       - name: Run CodeQL Analysis
         uses: github/codeql-action/init@v3
