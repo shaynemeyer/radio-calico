@@ -196,6 +196,7 @@ function updateAlbumArt() {
     const img = document.createElement('img');
     img.className = 'album-art-large';
     img.alt = 'Album Art';
+    img.loading = 'lazy';
     img.src = `${albumArtUrl}?t=${timestamp}`;
     
     img.onload = function() {
@@ -256,6 +257,13 @@ function startMetadataUpdates() {
     metadataInterval = setInterval(fetchMetadata, 30000);
 }
 
+function startMetadataUpdatesWithBackoff() {
+    fetchMetadata();
+    // Use longer interval when tab is not visible
+    const interval = document.hidden ? 60000 : 30000;
+    metadataInterval = setInterval(fetchMetadata, interval);
+}
+
 function stopMetadataUpdates() {
     if (metadataInterval) {
         clearInterval(metadataInterval);
@@ -269,7 +277,7 @@ playBtn.addEventListener('click', function() {
             isPlaying = true;
             playBtn.textContent = '⏸';
             updateStatus('Playing live stream...', 'playing');
-            startMetadataUpdates();
+            startMetadataUpdatesWithBackoff();
         }).catch(error => {
             console.error('Play error:', error);
             updateStatus('Error playing stream', 'error');
@@ -285,6 +293,14 @@ playBtn.addEventListener('click', function() {
 
 thumbsUpBtn.addEventListener('click', () => rateSong(1));
 thumbsDownBtn.addEventListener('click', () => rateSong(-1));
+
+// Add visibility change listener for optimized polling
+document.addEventListener('visibilitychange', function() {
+    if (isPlaying && metadataInterval) {
+        stopMetadataUpdates();
+        startMetadataUpdatesWithBackoff();
+    }
+});
 
 loadUserSession();
 initializePlayer();
