@@ -129,6 +129,11 @@ jobs:
       - name: Build production image
         run: docker compose -f docker-compose.prod.yml build
       
+      - name: Build production image
+        run: docker compose -f docker-compose.prod.yml build
+        env:
+          DB_PASSWORD: test_password_for_ci
+      
       - name: Test development container
         run: |
           docker compose --profile development up -d
