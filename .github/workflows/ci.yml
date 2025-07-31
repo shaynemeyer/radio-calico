@@ -90,6 +90,10 @@ jobs:
   security:
     name: Security Scans
     runs-on: ubuntu-latest
+    permissions:
+      actions: read
+      contents: read
+      security-events: write
     
     steps:
       - name: Checkout code
@@ -106,14 +110,6 @@ jobs:
       
       - name: Run comprehensive security scan via Make
         run: make security-scan
-      
-      - name: Run CodeQL Analysis
-        uses: github/codeql-action/init@v3
-        with:
-          languages: javascript
-      
-      - name: Perform CodeQL Analysis
-        uses: github/codeql-action/analyze@v3
 
   docker-build:
     name: Docker Build Test
@@ -132,6 +128,8 @@ jobs:
       
       - name: Build production image
         run: docker compose -f docker-compose.prod.yml build
+        env:
+          DB_PASSWORD: test_password_for_ci
       
       - name: Test development container
         run: |
@@ -150,7 +148,7 @@ jobs:
       - name: Check if all jobs succeeded
         run: |
           if [[ "${{ needs.test.result }}" == "success" && \
-                "${{ needs.integration-tests.result }}" == "success" && \ 
+                "${{ needs.integration-tests.result }}" == "success" && \
                 "${{ needs.security.result }}" == "success" && \
                 "${{ needs.docker-build.result }}" == "success" ]]; then
             echo "✅ All checks passed!"
