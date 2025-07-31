@@ -148,7 +148,7 @@ jobs:
       - name: Check if all jobs succeeded
         run: |
           if [[ "${{ needs.test.result }}" == "success" && \
-                "${{ needs.integration-tests.result }}" == "success" && \ 
+                "${{ needs.integration-tests.result }}" == "success" && \
                 "${{ needs.security.result }}" == "success" && \
                 "${{ needs.docker-build.result }}" == "success" ]]; then
             echo "✅ All checks passed!"
