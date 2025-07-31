@@ -29,6 +29,26 @@ function updateStatus(message, type = 'loading') {
 }
 
 function initializePlayer() {
+    // Check if HLS.js is loaded yet (handles deferred script loading)
+    if (typeof Hls === 'undefined') {
+        let attempts = 0;
+        const maxAttempts = 50; // 5 seconds max wait time
+        
+        // Wait for HLS.js to load
+        const checkHls = setInterval(() => {
+            attempts++;
+            if (typeof Hls !== 'undefined') {
+                clearInterval(checkHls);
+                initializePlayer();
+            } else if (attempts >= maxAttempts) {
+                clearInterval(checkHls);
+                console.error('HLS.js failed to load within timeout period');
+                updateStatus('Failed to load streaming library', 'error');
+            }
+        }, 100);
+        return;
+    }
+    
     if (Hls.isSupported()) {
         hls = new Hls({
             enableWorker: true,
