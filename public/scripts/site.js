@@ -104,7 +104,7 @@ audio.addEventListener('error', (e) => {
     playBtn.textContent = '▶';
 });
 
-audio.volume = 0.5;
+audio.volume = 1.0;
 
 function generateUserSession() {
     if (!userSession) {
