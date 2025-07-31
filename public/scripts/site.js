@@ -29,6 +29,26 @@ function updateStatus(message, type = 'loading') {
 }
 
 function initializePlayer() {
+    // Check if HLS.js is loaded yet (handles deferred script loading)
+    if (typeof Hls === 'undefined') {
+        let attempts = 0;
+        const maxAttempts = 50; // 5 seconds max wait time
+        
+        // Wait for HLS.js to load
+        const checkHls = setInterval(() => {
+            attempts++;
+            if (typeof Hls !== 'undefined') {
+                clearInterval(checkHls);
+                initializePlayer();
+            } else if (attempts >= maxAttempts) {
+                clearInterval(checkHls);
+                console.error('HLS.js failed to load within timeout period');
+                updateStatus('Failed to load streaming library', 'error');
+            }
+        }, 100);
+        return;
+    }
+    
     if (Hls.isSupported()) {
         hls = new Hls({
             enableWorker: true,
@@ -196,6 +216,7 @@ function updateAlbumArt() {
     const img = document.createElement('img');
     img.className = 'album-art-large';
     img.alt = 'Album Art';
+    img.loading = 'lazy';
     img.src = `${albumArtUrl}?t=${timestamp}`;
     
     img.onload = function() {
@@ -256,6 +277,13 @@ function startMetadataUpdates() {
     metadataInterval = setInterval(fetchMetadata, 30000);
 }
 
+function startMetadataUpdatesWithBackoff() {
+    fetchMetadata();
+    // Use longer interval when tab is not visible
+    const interval = document.hidden ? 60000 : 30000;
+    metadataInterval = setInterval(fetchMetadata, interval);
+}
+
 function stopMetadataUpdates() {
     if (metadataInterval) {
         clearInterval(metadataInterval);
@@ -269,7 +297,7 @@ playBtn.addEventListener('click', function() {
             isPlaying = true;
             playBtn.textContent = '⏸';
             updateStatus('Playing live stream...', 'playing');
-            startMetadataUpdates();
+            startMetadataUpdatesWithBackoff();
         }).catch(error => {
             console.error('Play error:', error);
             updateStatus('Error playing stream', 'error');
@@ -285,6 +313,14 @@ playBtn.addEventListener('click', function() {
 
 thumbsUpBtn.addEventListener('click', () => rateSong(1));
 thumbsDownBtn.addEventListener('click', () => rateSong(-1));
+
+// Add visibility change listener for optimized polling
+document.addEventListener('visibilitychange', function() {
+    if (isPlaying && metadataInterval) {
+        stopMetadataUpdates();
+        startMetadataUpdatesWithBackoff();
+    }
+});
 
 loadUserSession();
 initializePlayer();
